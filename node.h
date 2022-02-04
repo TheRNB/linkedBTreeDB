@@ -15,9 +15,11 @@ public:
     void delNode(int posID = 0); // SOLELY IN THIS BTNode
     int size();
     int index();
+    Node* getKey(int posID = 0);
+    BTNode* getChild(int posIS = 0);
 private:
     Node* keys[CHILD_MAX + 1];
-    Node* children[CHILD_MAX + 1];
+    BTNode* children[CHILD_MAX + 1];
     int parentIndex; //index of the this node among its parent
     int sizee;
 };

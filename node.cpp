@@ -1,10 +1,13 @@
 #include "node.h"
+#include <cstddef>
 
 BTNode::BTNode() {
     sizee = 0;
         parentIndex = -1;
-        for (int i = 0; i < CHILD_MAX; ++i)
-            keys[i] = children[i] = nullptr;
+        for (int i = 0; i < CHILD_MAX; ++i) {
+            keys[i] = NULL;
+            children[i] = NULL;
+        }
 }
 
 void BTNode::addNode(Node* newNode, int posID = 0) {
@@ -31,4 +34,12 @@ int BTNode::size() {
 
 int BTNode::index() {
     return parentIndex;
+}
+
+Node* BTNode::getKey(int posID = 0) {
+    return keys[posID];
+}
+
+BTNode* BTNode::getChild(int posID = 0) {
+    return children[posID];
 }
