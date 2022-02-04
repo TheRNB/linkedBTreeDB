@@ -1,13 +1,14 @@
 #include "node.h"
 #include <cstddef>
 
-BTNode::BTNode() {
+BTNode::BTNode(int cID) {
     sizee = 0;
-        parentIndex = -1;
-        for (int i = 0; i < CHILD_MAX; ++i) {
-            keys[i] = NULL;
-            children[i] = NULL;
-        }
+    parentIndex = -1;
+    for (int i = 0; i < CHILD_MAX; ++i) {
+        keys[i] = NULL;
+        children[i] = NULL;
+    }
+    columnName = cID;
 }
 
 void BTNode::addNode(Node* newNode, int posID = 0) {
@@ -16,15 +17,17 @@ void BTNode::addNode(Node* newNode, int posID = 0) {
         keys[i] = keys[i-1];
         children[i] = children[i-1];
     }
+    sizee++;
     return;
 }
 
 void BTNode::delNode(int posID = 0) {
     // DELETES A NODE SOLELY IN BTNode AND NOT THE CHILDREN
-        for (int i = posID; i <= CHILD_MAX; ++i) {
-            keys[i] = keys[i+1];
-            children[i] = children[i+1];
-        }
+    for (int i = posID; i <= CHILD_MAX; ++i) {
+        keys[i] = keys[i+1];
+        children[i] = children[i+1];
+    }
+    sizee--;
         return;
 }
 

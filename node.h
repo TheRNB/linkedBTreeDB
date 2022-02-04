@@ -10,7 +10,7 @@ public:
 
 class BTNode {
 public:
-    BTNode();
+    BTNode(int cID);
     void addNode(Node* newNode, int posID = 0); // SOLELY IN THIS BTNode
     void delNode(int posID = 0); // SOLELY IN THIS BTNode
     int size();
@@ -22,4 +22,5 @@ private:
     BTNode* children[CHILD_MAX + 1];
     int parentIndex; //index of the this node among its parent
     int sizee;
+    int columnName;
 };
