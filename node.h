@@ -3,7 +3,7 @@ const int CHILD_MAX = 5;
 
 class Node{
 public:
-    int data;
+    long long data;
     Node* nextField;
     BTNode* self;
 };
@@ -16,6 +16,7 @@ public:
     void delNode(int posID = 0); // SOLELY IN THIS BTNode
     void setChild(BTNode* child, int posID = 0);
     void setParent(BTNode* newParent);
+    void setKey(Node* newKey, int posID = 0);
     void BTNode::setParentIndex(int newIndex);
     int size();
     int index();

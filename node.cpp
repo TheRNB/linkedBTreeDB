@@ -76,3 +76,8 @@ void BTNode::setParent(BTNode* newParent) {
     parent = newParent;
     return;
 }
+
+void BTNode::setKey(Node* newKey, int posID = 0) {
+    keys[posID] = newKey;
+    return;
+}
