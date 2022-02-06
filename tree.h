@@ -8,7 +8,7 @@ enum Comparisson {SMALLER=0, EQUAL, BIGGER};
 class BTree {
 public:
     BTree (int cName);
-    std::vector<Node*> search(int queryValue, Comparisson queryType = EQUAL);
+    std::vector<Node*> search(int queryValue, Comparisson queryType);
     Node* insert(int queryValue);
     void deleteSingleNode(Node* queryValue, BTNode* curr);
     int size();
