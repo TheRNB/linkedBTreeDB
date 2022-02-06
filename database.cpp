@@ -1,5 +1,6 @@
 #include "database.h"
 #include <vector>
+#include <algorithm>
 
 database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	name = newName;
@@ -48,3 +49,46 @@ void database::deleteChunk(Comparisson queryType, int firstOperand, int secondOp
 	return;
 }
 
+void database::updateChunk(Comparisson queryType, int firstOperand, int secondOperand, int* newData) {
+	for (int i = 0; i < columnCount; ++i) {
+		if (columnTrees[i]->getName() == firstOperand) {
+			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
+			while(deleteQueue.empty() != true) {
+				Node* prevNode = deleteQueue.front();
+				Node* deleting = prevNode->nextField;
+				deleteQueue.pop_back();
+
+				for (int j = 1; j < columnCount; ++j) {
+					if (columnTrees[i+j]->getName() == 0) {
+						minAvialableIndex.add(deleting->data);
+					}
+					columnTrees[i+j]->deleteSingleNode(deleting, deleting->self);
+					deleting = deleting->nextField;
+					prevNode = columnTrees[i+j]->insert(newData[i+j % (columnCount-1)]);
+					prevNode = prevNode->nextField;
+				}
+			}
+		}
+	}
+	return;
+}
+
+std::vector<Node*> database::select(Comparisson queryType, int firstOperand, int secondOperand) {
+	std::vector<Node*> sortQueue;
+	for (int i = 0; i < columnCount; ++i) {
+		if (columnTrees[i]->getName() == firstOperand) {
+			std::vector<Node*> searchQueue = columnTrees[i]->search(secondOperand, queryType);
+			while(searchQueue.empty() != true) {
+				Node* node = searchQueue.front();
+				searchQueue.pop_back();
+				for (int j = i; j < columnCount; ++j) {
+					node = node->nextField;
+				}
+				sortQueue.push_back(node);
+			}
+		}
+	}
+	sort(sortQueue.begin(), sortQueue.end());
+	
+	return;
+}

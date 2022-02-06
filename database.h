@@ -8,6 +8,8 @@ public:
 	database(int newName, int sz, Type* newTypes, int* columnNames);
 	void insert(int* newValues);
 	void deleteChunk(Comparisson queryType, int firstOperand, int secondOperand);
+	void updateChunk(Comparisson queryType, int firstOperand, int secondOperand, int* newData);
+	std::vector<Node*> select(Comparisson queryType, int firstOperand, int secondOperand);
 private:
 	int name;
 	int columnCount;
