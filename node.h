@@ -10,17 +10,22 @@ public:
 
 class BTNode {
 public:
-    BTNode(int cID);
-    void addNode(Node* newNode, int posID = 0); // SOLELY IN THIS BTNode
+    BTNode(int cID, BTNode* par);
+    void addNodeByIndex(Node* newNode, int posID = 0); // SOLELY IN THIS BTNode
+    int addNode(Node* newNode);
     void delNode(int posID = 0); // SOLELY IN THIS BTNode
+    void setChild(BTNode* child, int posID = 0);
+    void setParent(BTNode* newParent);
     int size();
-    int index();
+    //int index();
     Node* getKey(int posID = 0);
     BTNode* getChild(int posIS = 0);
+    BTNode* getParent();
 private:
-    Node* keys[CHILD_MAX + 1];
-    BTNode* children[CHILD_MAX + 1];
-    int parentIndex; //index of the this node among its parent
+    Node* keys[CHILD_MAX + 2];
+    BTNode* children[CHILD_MAX + 2];
+    //int parentIndex; //index of the this node among its parent
+    BTNode* parent;
     int sizee;
     int columnName;
 };

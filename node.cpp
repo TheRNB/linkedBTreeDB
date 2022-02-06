@@ -1,17 +1,18 @@
 #include "node.h"
 #include <cstddef>
 
-BTNode::BTNode(int cID) {
+BTNode::BTNode(int cID, BTNode* par) {
     sizee = 0;
-    parentIndex = -1;
+    //parentIndex = -1;
     for (int i = 0; i < CHILD_MAX; ++i) {
         keys[i] = NULL;
         children[i] = NULL;
     }
     columnName = cID;
+    parent = par;
 }
 
-void BTNode::addNode(Node* newNode, int posID = 0) {
+void BTNode::addNodeByIndex(Node* newNode, int posID = 0) {
     // ADDS A NODE SOLELY IN BTNode AND NOT THE CHILDREN
     for (int i = CHILD_MAX; i > posID; --i) {
         keys[i] = keys[i-1];
@@ -19,6 +20,17 @@ void BTNode::addNode(Node* newNode, int posID = 0) {
     }
     sizee++;
     return;
+}
+
+int BTNode::addNode(Node* newNode) {
+    for (int i = 0; i < sizee; ++i) {
+        if (keys[i]->data >= newNode->data) {
+            addNodeByIndex(newNode, i);
+            return i;
+        }
+    }
+    addNodeByIndex(newNode, sizee);
+    return sizee-1;
 }
 
 void BTNode::delNode(int posID = 0) {
@@ -35,9 +47,9 @@ int BTNode::size() {
     return sizee;
 }
 
-int BTNode::index() {
-    return parentIndex;
-}
+//int BTNode::index() {
+//    return parentIndex;
+//}
 
 Node* BTNode::getKey(int posID = 0) {
     return keys[posID];
@@ -45,4 +57,18 @@ Node* BTNode::getKey(int posID = 0) {
 
 BTNode* BTNode::getChild(int posID = 0) {
     return children[posID];
+}
+
+BTNode* BTNode::getParent() {
+    return parent;
+}
+
+void BTNode::setChild(BTNode* newChild, int posID) {
+    children[posID] = newChild;
+    return;
+}
+
+void BTNode::setParent(BTNode* newParent) {
+    parent = newParent;
+    return;
 }
