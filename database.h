@@ -10,6 +10,7 @@ public:
 	void deleteChunk(Comparisson queryType, int firstOperand, int secondOperand);
 	void updateChunk(Comparisson queryType, int firstOperand, int secondOperand, int* newData);
 	std::vector<Node*> select(Comparisson queryType, int firstOperand, int secondOperand);
+	void printSelectChunk(Comparisson queryType, int firstOperand, int secondOperand, int* columnList, int listSize);
 private:
 	int name;
 	int columnCount;

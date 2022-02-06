@@ -1,6 +1,8 @@
 #include "database.h"
 #include <vector>
 #include <algorithm>
+#include <iostream>
+
 
 database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	name = newName;
@@ -89,6 +91,22 @@ std::vector<Node*> database::select(Comparisson queryType, int firstOperand, int
 		}
 	}
 	sort(sortQueue.begin(), sortQueue.end());
-	
+	return sortQueue;
+}
+
+void database::printSelectChunk(Comparisson queryType, int firstOperand, int secondOperand, int* columnList, int listSize) {
+	std::vector<Node*> printing = select(queryType, firstOperand, secondOperand);
+	for (int i = 0; i < printing.size(); ++i) {
+		for (int j = 0; j < columnCount; ++j) {
+			for (int k = 0; k < listSize; ++k) {
+				if (listSize == 0 or columnTrees[j]->getName() == columnList[k]) {
+					//SHOULD DEHASH THE DATA TO PRINT LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+					std::cout << printing[i]->data << " ";
+					break;
+				}
+			}
+		}
+		std::cout << "\n";
+	}
 	return;
 }
