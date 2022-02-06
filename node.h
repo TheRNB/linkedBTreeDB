@@ -26,7 +26,7 @@ public:
 private:
     Node* keys[CHILD_MAX + 2];
     BTNode* children[CHILD_MAX + 2];
-    int parentIndex; //index of the this node among its parent
+    //int parentIndex; //index of the this node among its parent
     BTNode* parent;
     int sizee;
     int columnName;

@@ -47,13 +47,13 @@ int BTNode::size() {
     return sizee;
 }
 
-int BTNode::index() {
-    return parentIndex;
-}
+//int BTNode::index() {
+//    return parentIndex;
+//}
 
-void BTNode::setParentIndex(int newIndex) {
-    parentIndex = newIndex;
-}
+//void BTNode::setParentIndex(int newIndex) {
+//    parentIndex = newIndex;
+//}
 
 Node* BTNode::getKey(int posID = 0) {
     return keys[posID];

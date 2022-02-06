@@ -4,7 +4,6 @@
 #include <queue>
 
 enum Comparisson {SMALLER=0, EQUAL, BIGGER};
-enum Type {STRING=0, INTEGER, DATE};
 
 class BTree {
 public:

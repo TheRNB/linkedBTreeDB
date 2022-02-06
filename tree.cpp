@@ -6,7 +6,6 @@ BTree::BTree (int cName){
     size = 0;
 }
 
-//SHOULD INCORPORATE SET PARENT INDEX
 Node* BTree::add(int queryValue, BTNode* curr) {
     if (curr == NULL) {
         curr = curr->getParent();
