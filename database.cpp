@@ -36,7 +36,7 @@ void database::deleteChunk(Comparisson queryType, int firstOperand, int secondOp
 		if (columnTrees[i]->getName() == firstOperand) {
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			while(deleteQueue.empty() != true) {
-				Node* deleting = deleteQueue.front();
+				Node* deleting = deleteQueue.back();
 				deleteQueue.pop_back();
 				for (int j = 0; j < columnCount; ++j) {
 					if (columnTrees[i+j]->getName() == 0) {
@@ -56,7 +56,7 @@ void database::updateChunk(Comparisson queryType, int firstOperand, int secondOp
 		if (columnTrees[i]->getName() == firstOperand) {
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			while(deleteQueue.empty() != true) {
-				Node* prevNode = deleteQueue.front();
+				Node* prevNode = deleteQueue.back();
 				Node* deleting = prevNode->nextField;
 				deleteQueue.pop_back();
 
@@ -81,7 +81,7 @@ std::vector<Node*> database::select(Comparisson queryType, int firstOperand, int
 		if (columnTrees[i]->getName() == firstOperand) {
 			std::vector<Node*> searchQueue = columnTrees[i]->search(secondOperand, queryType);
 			while(searchQueue.empty() != true) {
-				Node* node = searchQueue.front();
+				Node* node = searchQueue.back();
 				searchQueue.pop_back();
 				for (int j = i; j < columnCount; ++j) {
 					node = node->nextField;
