@@ -3,7 +3,7 @@
 BTree::BTree (int cName){
     root = NULL;
     columnName = cName;
-    size = 0;
+    sizee = 0;
 }
 
 Node* BTree::add(int queryValue, BTNode* curr) {
@@ -68,11 +68,11 @@ Node* BTree::insert(int queryValue) {
         return;
     }
     add(queryValue, root);
-    size++;
+    sizee++;
     return;
 }
 
-void deleteSingleNode(int queryValue, BTNode* curr) {
+void BTree::deleteSingleNode(int queryValue, BTNode* curr) {
     if (curr == NULL) {
         return;
     }
@@ -90,7 +90,7 @@ void deleteSingleNode(int queryValue, BTNode* curr) {
             //It is a leaf
             if (curr->getChild(queryValueIndex+1) != NULL)
                 curr->setChild(curr->getChild(queryValueIndex+1), queryValueIndex+2);
-
+            sizee--;
 
             curr->delNode(queryValueIndex+1);
             if (curr->size() >= CHILD_MIN)
@@ -193,4 +193,8 @@ std::vector<Node*> BTree::search(int queryValue, Comparisson queryType = EQUAL) 
         }
     }
     return result;
+}
+
+int BTree::size() {
+    return sizee;
 }
