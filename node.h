@@ -1,5 +1,5 @@
 const int CHILD_MIN = 3;
-const int CHILD_MAX = 5;
+const int CHILD_MAX = 7;
 
 class Node{
 public:

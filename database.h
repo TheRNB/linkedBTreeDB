@@ -7,6 +7,7 @@ class database{
 public:
 	database(int newName, int sz, Type* newTypes, int* columnNames);
 	void insert(int* newValues);
+	void deleteChunk(Comparisson queryType, int firstOperand, int secondOperand);
 private:
 	int name;
 	int columnCount;

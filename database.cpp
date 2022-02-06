@@ -1,4 +1,5 @@
 #include "database.h"
+#include <vector>
 
 database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	name = newName;
@@ -23,6 +24,26 @@ void database::insert(int* newValues) {
 	}
 	for(int i = 0; i < columnCount; ++i) {
 		newLinkedList[i]->nextField = newLinkedList[(i+1)%columnCount];
+	}
+	return;
+}
+
+void database::deleteChunk(Comparisson queryType, int firstOperand, int secondOperand) {
+	for (int i = 0; i < columnCount; ++i) {
+		if (columnTrees[i]->getName() == firstOperand) {
+			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
+			while(deleteQueue.empty() != true) {
+				Node* deleting = deleteQueue.front();
+				deleteQueue.pop_back();
+				for (int j = 0; j < columnCount; ++j) {
+					if (columnTrees[i+j]->getName() == 0) {
+						minAvialableIndex.add(deleting->data);
+					}
+					columnTrees[i+j]->deleteSingleNode(deleting, deleting->self);
+					deleting = deleting->nextField;
+				}
+			}
+		}
 	}
 	return;
 }

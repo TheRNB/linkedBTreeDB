@@ -72,19 +72,19 @@ Node* BTree::insert(int queryValue) {
     return;
 }
 
-void BTree::deleteSingleNode(int queryValue, BTNode* curr) {
+/*void BTree::deleteSingleNode(Node* queryValue, BTNode* curr) {
     if (curr == NULL) {
         return;
     }
 
     int queryValueIndex = -1;
     for(int i = 0; i < curr->size(); ++i) {
-        if (curr->getKey(i)->data < queryValue) {
+        if (curr->getKey(i)->data < queryValue->data) {
             queryValueIndex = i;
         }
     }
     if (queryValueIndex+1 < curr->size() and 
-        curr->getKey(queryValueIndex+1)->data == queryValue) { //found the desired node
+        curr->getKey(queryValueIndex+1)->data == queryValue->data) { //found the desired node
         
         if (curr->getChild(queryValueIndex+1) == NULL or curr->getChild(queryValueIndex+2) == NULL) {
             //It is a leaf
@@ -148,6 +148,87 @@ void BTree::deleteSingleNode(int queryValue, BTNode* curr) {
     } else {
         deleteSingleNode(queryValue, curr->getChild(queryValueIndex+1));
     }
+}*/
+
+void BTree::deleteSingleNode(Node* queryValue, BTNode* curr) {
+    if (curr == NULL) {
+        return;
+    }
+
+    int index = -1;
+    for (int i = 0; i < curr->size(); ++i) {
+        if (curr->getKey(i) == queryValue) {
+            index = i;
+        }
+    }
+    if (index = -1)
+        return;
+    
+    if (curr->getChild(index) != NULL and curr->getChild(index+1) != NULL) {
+        //curr is an internal node here
+        curr->setKey(curr->getChild(index+1)->getKey(0), index);
+        curr->getChild(index+1)->setKey(queryValue, 0);
+        deleteSingleNode(queryValue, curr->getChild(index+1));
+        return;
+    }
+    
+    //curr is a leaf
+    curr->delNode(index);
+    while (curr != root) {
+        if(curr->size() >= CHILD_MIN)
+            return;
+
+        int parentIndex = -1;
+        for (int i = 0; i <= curr->getParent()->size(); ++i) {
+            if (curr->getParent()->getChild(i) == curr) {
+                parentIndex = i;
+                return;
+            }
+        }
+
+        if (parentIndex < curr->getParent()->size()-1 and 
+            curr->getParent()->getChild(parentIndex+1)->size() > CHILD_MIN) {
+                BTNode* rightBrother = curr->getParent()->getChild(parentIndex+1);
+                curr->addNodeByIndex(curr->getParent()->getKey(parentIndex), curr->size());
+                curr->getParent()->setKey(rightBrother->getKey(0), parentIndex);
+                curr->setChild(rightBrother->getChild(0), curr->size());
+                rightBrother->delNode(0);
+        }
+
+        if (parentIndex > 0 and 
+            curr->getParent()->getChild(parentIndex-1)->size() > CHILD_MIN) {
+                BTNode* leftBrother = curr->getParent()->getChild(parentIndex-1);
+                curr->addNodeByIndex(curr->getParent()->getKey(parentIndex-1), 0);
+                curr->getParent()->setKey(leftBrother->getKey(leftBrother->size()-1), parentIndex-1);
+                curr->setChild(leftBrother->getChild(leftBrother->size()), 0);
+                leftBrother->delNode(leftBrother->size());
+        }
+
+        if (parentIndex < curr->getParent()->size()-1) {
+                int childCount = curr->size();
+                BTNode* rightBrother = curr->getParent()->getChild(parentIndex+1);
+                curr->addNode(curr->getParent()->getKey(parentIndex));
+                curr->setChild(rightBrother->getChild(0), childCount++);
+                for (int i = 1; i <= rightBrother->size(); ++i) {
+                    curr->addNodeByIndex(rightBrother->getKey(i-1), curr->size());
+                    curr->setChild(rightBrother->getChild(i), childCount++);
+                }
+                delete rightBrother;
+        }
+
+        if (parentIndex > 0) {
+                BTNode* leftBrother = curr->getParent()->getChild(parentIndex-1);
+                curr->addNode(curr->getParent()->getKey(parentIndex-1));
+                curr->setChild(leftBrother->getChild(leftBrother->size()), 0);
+                for (int i = leftBrother->size(); i > 0; --i) {
+                    curr->addNodeByIndex(leftBrother->getKey(i-1), 0);
+                    curr->setChild(leftBrother->getChild(i), 0);
+                }
+                delete leftBrother;
+        }
+        curr = curr->getParent();
+    }
+    return;
 }
 
 std::vector<Node*> BTree::search(int queryValue, Comparisson queryType = EQUAL) {
@@ -197,4 +278,8 @@ std::vector<Node*> BTree::search(int queryValue, Comparisson queryType = EQUAL) 
 
 int BTree::size() {
     return sizee;
+}
+
+int BTree::getName() {
+    return columnName;
 }
