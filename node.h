@@ -16,15 +16,16 @@ public:
     void delNode(int posID = 0); // SOLELY IN THIS BTNode
     void setChild(BTNode* child, int posID = 0);
     void setParent(BTNode* newParent);
+    void BTNode::setParentIndex(int newIndex);
     int size();
-    //int index();
+    int index();
     Node* getKey(int posID = 0);
     BTNode* getChild(int posIS = 0);
     BTNode* getParent();
 private:
     Node* keys[CHILD_MAX + 2];
     BTNode* children[CHILD_MAX + 2];
-    //int parentIndex; //index of the this node among its parent
+    int parentIndex; //index of the this node among its parent
     BTNode* parent;
     int sizee;
     int columnName;
