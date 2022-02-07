@@ -115,3 +115,7 @@ void database::printSelectChunk(Comparisson queryType, int firstOperand, int sec
 	}
 	return;
 }
+
+int database::getName() {
+	return name;
+}
