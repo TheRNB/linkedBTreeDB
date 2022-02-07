@@ -106,12 +106,19 @@ std::vector<Node*> database::select(Comparisson queryType, int firstOperand, int
 	return searchQueue;
 }
 
-void database::printSelectChunk(Comparisson queryType, int firstOperand, int secondOperand, int* columnList, int listSize) {
-	std::vector<Node*> printing = select(queryType, firstOperand, secondOperand);
+void database::printSelectChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr, vector<std::string> &columnListVec) {
+	int listSize = columnListVec.size();
+	std::vector<Node*> printing;
+	for (int i = 0; i < columnCount; ++i) {
+		if (columnTrees[i]->getName() == hashh(firstOperandStr, STRING)) {
+			printing = select(queryType, hashh(firstOperandStr, STRING), hashh(secondOperandStr, columnTypes[i]));
+			break;
+		}
+	}
 	for (int i = 0; i < printing.size(); ++i) {
 		for (int j = 0; j < columnCount; ++j) {
 			for (int k = 0; k < listSize; ++k) {
-				if (columnTrees[j]->getName() == columnList[k]) {
+				if (columnTrees[j]->getName() == hashh(columnListVec[k], STRING)) {
 					std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
 				}
 			}

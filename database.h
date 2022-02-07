@@ -13,7 +13,7 @@ public:
 	void deleteChunk(Comparisson, std::string, std::string);//Comparisson queryType, int firstOperand, int secondOperand
 	void updateChunk(Comparisson, std::string, std::string, vector<std::string>&);//Comparisson queryType, int firstOperand, int secondOperand, int* data
 	std::vector<Node*> select(Comparisson, int, int);
-	void printSelectChunk(Comparisson, int, int, int*, int); //..., int* columnList, int listSize
+	void printSelectChunk(Comparisson, std::string, std::string, vector<std::string>&); //..., int* columnList, int listSize
 	int getName();
 private:
 	int name;
