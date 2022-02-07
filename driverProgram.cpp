@@ -7,28 +7,103 @@
 
 using namespace std;
 
+string cleanInput(string input) {
+	string expandedString = "";
+	for (int i = 0; i < (int)input.size(); ++i) {
+		if (input[i] == ',') {
+			expandedString += " , ";
+		}
+		else if (input[i] == '(') {
+			expandedString += "( ";
+		}
+		else if (input[i] == ')') {
+			expandedString += " )";
+		}
+		else if (input[i] == '<') {
+			expandedString += " < ";
+		}
+		else if (input[i] == '>') {
+			expandedString += " > ";
+		}
+		else if (input[i] == '=' and input[i-1] != '=') {
+			expandedString += " == ";
+			i++;
+		} else {
+			expandedString += input[i];
+		}
+	}
+	int newBegin = 0, newEnd = expandedString.size()-1;
+	while (expandedString[newBegin] == ' ')
+		newBegin++;
+	while (expandedString[newEnd] == ' ')
+		newEnd--;
+
+	string cleanString = "";
+	for (int i = newBegin; i <= newEnd; ++i) {
+		if (expandedString[i] != ' ')
+			cleanString += expandedString[i];
+		else if (expandedString[i] == ' ' and expandedString[i-1] != ' ')
+			cleanString += ' ';
+	}
+
+	string normalString = "";
+	for (int i = 0; i < (int)cleanString.size(); ++i) {
+		if (cleanString[i] != '(' and cleanString[i] != ')' and
+			cleanString[i] != ',' and 
+			cleanString[i] != '<' and cleanString[i] != '>' and cleanString[i] != '=' and
+			cleanString[i] != ' ')
+				normalString += cleanString[i];
+		else if (cleanString[i] == '(') {
+			normalString += "(";
+			i++;
+		}
+		else if (cleanString[i] == ' ' and cleanString[i+1] == ')') {
+			normalString += ")";
+			i++;
+		}
+		else if (cleanString[i] == ' ' and cleanString[i+1] == ',') {
+			normalString += ",";
+			i+=2;
+		}
+		else if (cleanString[i] == ' ' and cleanString[i+1] == '<') {
+			normalString += "<";
+			i+=2;
+		}
+		else if (cleanString[i] == ' ' and cleanString[i+1] == '>') {
+			normalString += ">";
+			i+=2;
+		}
+		else if (cleanString[i] == ' ' and cleanString[i+1] == '=') {
+			normalString += "==";
+			i+=3;
+		} 
+		else if (cleanString[i] == ' ' and cleanString[i+1] != ' ') {
+			normalString += ' ';
+		}
+	}
+	return normalString;
+}
+
 int main() {
 	vector<database*> databaseList;
 	string inputLine = "";
-	//CREATE TABLE {table name} (column1 type,column2 type,...)
-	//INSERT INTO {table name} VALUES (field1,field2,...)
-	//DELETE FROM {table name} WHERE {condition}
-	//UPDATE {table name} SET ("Hamid",2022/8/7,50000) WHERE {condition}
-	//SELECT {(column1,column2,...) or *} FROM {table name} WHERE condition
-	cerr << "not Done" << endl;
+	//CREATE TABLE {table name} ( column1 type , column2 type , ... )
+	//INSERT INTO {table name} VALUES ( field1 , field2 , ... )
+	//DELETE FROM {table name} WHERE {cond i tion}
+	//UPDATE {table name} SET ( "Hamid" , 2022/8/7 , 50000 ) WHERE {cond i tion}
+	//SELECT {( column1 , column2 , ... ) or *} FROM {table name} WHERE cond i tion
 	int qCnt;
 	cin >> qCnt;
-	cerr << "done" << endl;
+	qCnt++;
 	while (qCnt--) {
 		getline(cin, inputLine);
-		cerr << inputLine << endl;
-		stringstream commandLineInput(inputLine);
+		stringstream commandLineInput(cleanInput(inputLine));
 		string parsedWord;
 		getline(commandLineInput, parsedWord, ' ');
 		if (parsedWord == "CREATE") {
 			getline(commandLineInput, parsedWord, ' '); // to ignore "TABLE"
 			getline(commandLineInput, parsedWord, ' '); // current name
-			long long databaseName = hashh(parsedWord, Type(STRING));
+			long long databaseName = hashh(parsedWord, STRING);
 			vector<long long> columns;
 			vector<Type> types;
 			while (getline(commandLineInput, parsedWord, ',')) {
@@ -39,11 +114,11 @@ int main() {
 				} else {
 					columns.push_back(hashh(parsedWord, Type(STRING)));
 				}
+				cerr << "parsed " << parsedWord << endl;
 				getline(column, parsedWord, ' ');
 				if(parsedWord[parsedWord.size()-1] == ')') {
 					parsedWord = parsedWord.substr(0, parsedWord.size()-1);
 				}
-				cerr << "parsedType is " << parsedWord << endl;
 				if (parsedWord == "string") {
 					types.push_back(Type(STRING));
 				} else if (parsedWord == "timestamp") {
@@ -58,9 +133,11 @@ int main() {
 				tmp1[i] = types[i];
 				tmp2[i] = columns[i];
 			}
-			cerr << "here " << databaseName << " " << columns.size() << endl;
-			for (int i = 0; i < types.size(); ++i) cout << types[i] << " ";
-			cout << endl;
+			cerr << "CREATE " << deHash(databaseName, STRING) << " " << columns.size() << endl;
+			for (int i = 0; i < columns.size(); ++i) cerr << tmp1[i] << " ";
+			cerr << endl; 
+			for (int i = 0; i < columns.size(); ++i) cerr << deHash(tmp2[i], STRING) << " ";
+			cerr << endl << endl;
 			databaseList.push_back(new database(databaseName, columns.size(), tmp1, tmp2));
 		}
 		else if(parsedWord == "INSERT") {
@@ -77,6 +154,9 @@ int main() {
 			}
 			inputee[0] = inputee[0].substr(1);
 			inputee[inputee.size()-1] = inputee[inputee.size()-1].substr(0, inputee[inputee.size()-1].size()-1);
+			cerr << "INSERT" << endl;
+			for (int i = 0; i < (int)inputee.size(); ++i) cerr << inputee[i] << " ";
+			cerr << endl << endl;
 			databaseList[tableIndex]->insert(inputee);
 		}
 		else if (parsedWord == "DELETE") {
@@ -91,14 +171,17 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "DELETE " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(SMALLER, firstOperand, secondOperand);
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
+					cerr << "DELETE " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand);
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "DELETE " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(BIGGER, firstOperand, secondOperand);
 				}
 			}
@@ -123,14 +206,23 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "UPDATE " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(SMALLER, firstOperand, secondOperand, inputee);
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
+					cerr << "UPDATE " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand, inputee);
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "UPDATE " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(BIGGER, firstOperand, secondOperand, inputee);
 				}
 			}
@@ -158,15 +250,27 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "SELECT " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(SMALLER, firstOperand, secondOperand, inputee);
+					break;
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
+					cerr << "SELECT " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(EQUAL, firstOperand, secondOperand, inputee);
+					break;
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
+					cerr << "SELECT " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl;
+					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
+					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(BIGGER, firstOperand, secondOperand, inputee);
+					break;
 				}
 			}
 		}
