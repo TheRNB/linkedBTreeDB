@@ -49,6 +49,7 @@ std::string deHashString(long long hashedString) {
 	std::string result = "";
 	while (hashedString > 0) {
 		int remainder = hashedString % 36;
+		hashedString/=36;
 		if (remainder < 10) {
 			result = char('0' + remainder) + result;
 		} else {
@@ -62,6 +63,7 @@ std::string deHashInteger(long long hashedInteger) {
 	std::string result = "";
 	while (hashedInteger > 0) {
 		int remainder = hashedInteger % 10;
+		hashedInteger /= 10;
 		result = char('0' + remainder) + result;
 	}
 	return result;
@@ -75,6 +77,7 @@ std::string deHashDate(long long hashedDate) {
 		if (cnt == 2 or cnt == 4)
 			result = '/' + result;
 		int remainder = hashedDate % 10;
+		hashedDate /= 10;
 		result = char('0' + remainder) + result;
 	}
 	return result;

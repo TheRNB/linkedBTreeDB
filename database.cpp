@@ -107,7 +107,7 @@ void database::printSelectChunk(Comparisson queryType, int firstOperand, int sec
 				}
 			}
 			if (listSize == 0) {
-				std::cout << printing[i]->data << " and " << columnTypes[j] << " ";
+				std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
 			}
 			printing[i] = printing[i]->nextField;
 		}
