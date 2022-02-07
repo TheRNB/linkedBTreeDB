@@ -13,9 +13,9 @@ public:
     void deleteSingleNode(Node*, BTNode*); //Node* queryValue, BTNode* curr
     int size();
     int getName();
-private:
     BTNode* root;
+private:
     int columnName; // 0 means ID column
     int sizee;
-    Node* add(int, BTNode*); //int queryValue, BTNode* curr
+    Node* add(int, BTNode*, BTNode*); //int queryValue, BTNode* curr
 };

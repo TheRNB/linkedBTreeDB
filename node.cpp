@@ -1,7 +1,7 @@
 #include "node.h"
 #include <cstddef>
 
-BTNode::BTNode(int cID, BTNode* par) {
+BTNode::BTNode(int cID, BTNode* par = NULL) {
     sizee = 0;
     //parentIndex = -1;
     for (int i = 0; i < CHILD_MAX; ++i) {
@@ -18,6 +18,7 @@ void BTNode::addNodeByIndex(Node* newNode, int posID = 0) {
         keys[i] = keys[i-1];
         children[i] = children[i-1];
     }
+    keys[posID] = newNode;
     sizee++;
     return;
 }
@@ -40,7 +41,7 @@ void BTNode::delNode(int posID = 0) {
         children[i] = children[i+1];
     }
     sizee--;
-        return;
+    return;
 }
 
 int BTNode::size() {

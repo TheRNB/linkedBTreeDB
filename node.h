@@ -21,7 +21,7 @@ public:
     void setKey(Node*, int);
     //void BTNode::setParentIndex(int);
     int size();
-    int index();
+    //int index();
     Node* getKey(int);
     BTNode* getChild(int);
     BTNode* getParent();
