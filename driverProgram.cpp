@@ -94,7 +94,7 @@ int main() {
 	//SELECT {( column1 , column2 , ... ) or *} FROM {table name} WHERE cond i tion
 	int qCnt;
 	cin >> qCnt;
-	qCnt++;
+	cin.ignore();
 	while (qCnt--) {
 		getline(cin, inputLine);
 		stringstream commandLineInput(cleanInput(inputLine));
@@ -114,7 +114,6 @@ int main() {
 				} else {
 					columns.push_back(hashh(parsedWord, Type(STRING)));
 				}
-				cerr << "parsed " << parsedWord << endl;
 				getline(column, parsedWord, ' ');
 				if(parsedWord[parsedWord.size()-1] == ')') {
 					parsedWord = parsedWord.substr(0, parsedWord.size()-1);

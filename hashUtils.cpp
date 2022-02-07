@@ -4,10 +4,9 @@
 long long hashString(std::string inputString) {
 	long long result = 0;
 	for (int i = 0; i < (int)inputString.size(); ++i) {
-		if (((i == 0) or (i == ((int)inputString.size()-1))) and inputString[i] == '\"') continue;
-		if (inputString[i] == ' ') continue;
+		if (((i == 0) or (i == ((int)inputString.size()-1))) and inputString[i] == char(34)) continue;
 		result *= 37;
-		if ('0' >= inputString[i] and inputString[i] <= '9') {
+		if ('0' <= inputString[i] and inputString[i] <= '9') {
 			result += ((long long)(inputString[i] - '0') + 1);
 		}
 		else {
@@ -28,12 +27,28 @@ long long hashInteger(std::string inputString) {
 }
 
 long long hashDate(std::string inputString) {
+	//cerr << "hashing " << inputString << endl;
 	long long result = 0;
 	for (int i = 0; i < (int)inputString.size(); ++i) {
 		if (inputString[i] == ' ') continue;
-		result *= 11;
-		if (inputString[i] == '/') result += 10;
-		else result += (long long)(inputString[i] - '0');
+		else if (inputString[6] == '/' and i == 5) {
+			result *= 11;
+			result *= 11;
+			result += (long long)(inputString[i] - '0');
+		}
+		else if ((inputString.size() == 8 or (inputString.size() == 9 and inputString[7] == '/')) and i == inputString.size()-1) {
+			result *= 11;
+			result *= 11;
+			result += (long long)(inputString[i] - '0');
+		}
+		else if (inputString[i] == '/') {
+			result *= 11;
+			result += 10;
+		}
+		else {
+			result *= 11;
+			result += (long long)(inputString[i] - '0');
+		}
 	}
 	return result;
 }
@@ -55,7 +70,7 @@ std::string deHashString(long long hashedString) {
 	while (hashedString > 0) {
 		int remainder = hashedString % 37;
 		hashedString/=37;
-		if (remainder < 10) {
+		if (remainder <= 10) {
 			result = char('0' + remainder -1) + result;
 		} else {
 			result = char('a' + remainder - 11) + result;
@@ -84,7 +99,8 @@ std::string deHashDate(long long hashedDate) {
 	while (hashedDate > 0) {
 		int remainder = hashedDate % 11;
 		hashedDate /= 11;
-		if (remainder == 10) result = "/" + result; 
+		if (remainder == 0 and (hashedDate % 11) == 10) continue;
+		else if (remainder == 10) result = "/" + result; 
 		else result = char('0' + remainder) + result;
 	}
 	return result;
@@ -99,15 +115,3 @@ std::string deHash(long long inputString, Type inputType) {
 		return deHashDate(inputString);
 	}
 }
-
-/*
-8
-CREATE TABLE x (name string,joinDate timestamp,income int)
-INSERT INTO x VALUES ("atena",2019/7/6,55000)
-INSERT INTO x VALUES ("sajede",2020/5/24,20000)
-INSERT INTO x VALUES ("sajede",2020/5/24,20000)
-INSERT INTO x VALUES ("sag",2010/5/24,110000)
-INSERT INTO x VALUES ("atena",2019/7/6,550400)
-//UPDATE x SET ("narges20", 2022/1/14, 4000) WHERE income>100000
-SELECT * FROM x WHERE name=="narges20"
-*/

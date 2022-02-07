@@ -75,10 +75,10 @@ void database::updateChunk(Comparisson queryType, std::string firstOperandStr, s
 			long long secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			for (int j = 0; j < deleteQueue.size(); ++j) {
-				Node* tmp = deleteQueue[j];
 				for (int k = i; k < columnCount; ++k) {
-					tmp = tmp->nextField;
+					deleteQueue[j] = deleteQueue[j]->nextField;
 				}
+				Node* tmp = deleteQueue[j];
 				Node* tmp1 = tmp->nextField;
 				Node* tmp2 = tmp1->nextField;
 				for (int k = 0; k < columnCount-1; ++k) {
@@ -117,6 +117,7 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == hashh(firstOperandStr, STRING)) {
 			printing = select(queryType, hashh(firstOperandStr, STRING), hashh(secondOperandStr, columnTypes[i]));
+			sortVector(printing);
 			break;
 		}
 	}
@@ -163,7 +164,7 @@ void database::mergeSort(int begin, int end, std::vector<Node*> &input, std::vec
 	
 	int itFirst = begin, itSecond = mid, index = begin;
 	while (itFirst < mid and itSecond < end)
-		if (tmp[itFirst] <= tmp[itSecond])
+		if (tmp[itFirst]->data <= tmp[itSecond]->data)
 			input[index++] = tmp[itFirst++];
 		else
 			input[index++] = tmp[itSecond++];
