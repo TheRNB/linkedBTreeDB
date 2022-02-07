@@ -103,7 +103,7 @@ int main() {
 		if (parsedWord == "CREATE") {
 			getline(commandLineInput, parsedWord, ' '); // to ignore "TABLE"
 			getline(commandLineInput, parsedWord, ' '); // current name
-			long long databaseName = hashh(parsedWord, STRING);
+			string databaseName = parsedWord;
 			vector<long long> columns;
 			vector<Type> types;
 			while (getline(commandLineInput, parsedWord, ',')) {
@@ -132,18 +132,13 @@ int main() {
 				tmp1[i] = types[i];
 				tmp2[i] = columns[i];
 			}
-			cerr << "CREATE " << deHash(databaseName, STRING) << " " << columns.size() << endl;
-			for (int i = 0; i < columns.size(); ++i) cerr << tmp1[i] << " ";
-			cerr << endl; 
-			for (int i = 0; i < columns.size(); ++i) cerr << deHash(tmp2[i], STRING) << " ";
-			cerr << endl << endl;
 			databaseList.push_back(new database(databaseName, columns.size(), tmp1, tmp2));
 		}
 		else if(parsedWord == "INSERT") {
 			getline(commandLineInput, parsedWord, ' '); // to ignore INTO
 			getline(commandLineInput, parsedWord, ' '); // current name
 			int tableIndex = 0;
-			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); //to ignore VALUES
 			getline(commandLineInput, parsedWord, ' ');
 			vector<string> inputee;
@@ -162,7 +157,7 @@ int main() {
 			getline(commandLineInput, parsedWord, ' '); // to ignore FROM
 			getline(commandLineInput, parsedWord, ' '); // current name
 			int tableIndex = 0;
-			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
 			getline(commandLineInput, parsedWord, ' ');
 			string firstOperand, secondOperand;
@@ -170,17 +165,14 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "DELETE " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(SMALLER, firstOperand, secondOperand);
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
-					cerr << "DELETE " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand);
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "DELETE " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl << endl;
 					databaseList[tableIndex]->deleteChunk(BIGGER, firstOperand, secondOperand);
 				}
 			}
@@ -188,7 +180,7 @@ int main() {
 		else if (parsedWord == "UPDATE") {
 			getline(commandLineInput, parsedWord, ' '); // current name
 			int tableIndex = 0;
-			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); // to ignore SET
 			getline(commandLineInput, parsedWord, ' ');
 			vector<string> inputee;
@@ -205,23 +197,14 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "UPDATE " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(SMALLER, firstOperand, secondOperand, inputee);
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
-					cerr << "UPDATE " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand, inputee);
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "UPDATE " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->updateChunk(BIGGER, firstOperand, secondOperand, inputee);
 				}
 			}
@@ -241,7 +224,7 @@ int main() {
 			getline(commandLineInput, parsedWord, ' ');//to ignore FROM
 			getline(commandLineInput, parsedWord, ' ');
 			int tableIndex = 0;
-			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
 			getline(commandLineInput, parsedWord, ' ');
 			string firstOperand, secondOperand;
@@ -249,25 +232,16 @@ int main() {
 				if (parsedWord[k] == '<') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "SELECT " << "SMALLER" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(SMALLER, firstOperand, secondOperand, inputee);
 					break;
 				} else if (parsedWord[k] == '=') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
-					cerr << "SELECT " << "EQUAL" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(EQUAL, firstOperand, secondOperand, inputee);
 					break;
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
-					cerr << "SELECT " << "BIGGER" << " " << firstOperand << " " << secondOperand << endl;
-					for (int i = 0; i < inputee.size(); ++i) cerr << inputee[i] << " ";
-					cerr << endl << endl;
 					databaseList[tableIndex]->printSelectChunk(BIGGER, firstOperand, secondOperand, inputee);
 					break;
 				}

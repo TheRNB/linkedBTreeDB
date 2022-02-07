@@ -18,12 +18,17 @@ long long hashString(std::string inputString) {
 
 long long hashInteger(std::string inputString) {
 	long long result = 0;
+	int sign = 1;
 	for (int i = 0; i < (int)inputString.size(); ++i) {
+		if (i == 0 and inputString[i] == '-') {
+			sign = -1;
+			continue;
+		}
 		if (inputString[i] == ' ') continue;
 		result *= 10;
 		result += (long long)(inputString[i] - '0');
 	}
-	return result;
+	return sign * result;
 }
 
 long long hashDate(std::string inputString) {
@@ -82,12 +87,19 @@ std::string deHashString(long long hashedString) {
 std::string deHashInteger(long long hashedInteger) {
 	if(hashedInteger == 0)
 		return "0";
+	
+	bool isNeg = false;
+	if (hashedInteger < 0) {
+		hashedInteger = -hashedInteger;
+		isNeg = true;
+	}
 	std::string result = "";
 	while (hashedInteger > 0) {
 		int remainder = hashedInteger % 10;
 		hashedInteger /= 10;
 		result = char('0' + remainder) + result;
 	}
+	if (isNeg) result = "-" + result;
 	return result;
 }
 

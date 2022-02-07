@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-database::database(long long newName, int sz, Type* newTypes, long long* columnNames) {
+database::database(std::string newName, int sz, Type* newTypes, long long* columnNames) {
 	name = newName;
 	columnCount = sz+1;
 	columnTypes = new Type[columnCount];
@@ -141,7 +141,7 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 	return;
 }
 
-long long database::getName() {
+std::string database::getName() {
 	return name;
 }
 
