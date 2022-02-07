@@ -20,7 +20,7 @@ database::database(long long newName, int sz, Type* newTypes, long long* columnN
 void database::insert(vector<std::string> &inputVector) {
 	long long* newValues = new long long [(int)inputVector.size()];
 	for (int i = 0; i < (int)inputVector.size(); ++i) {
-		newValues[i] = hashh(inputVector[i], columnTypes[i]);
+		newValues[i] = hashh(inputVector[i], columnTypes[i+1]);
 	}
 	int newId = columnTrees[0]->size();
 	if (minAvialableIndex.isEmpty() == false) {
@@ -43,14 +43,19 @@ void database::deleteChunk(Comparisson queryType, std::string firstOperandStr, s
 		if (columnTrees[i]->getName() == firstOperand) {
 			long long secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
+			for (int j = 0; j < deleteQueue.size(); ++j) {
+				for (int k = i; k < columnCount; ++k) {
+					deleteQueue[j] = deleteQueue[j]->nextField;
+				}
+			}
 			while(deleteQueue.empty() != true) {
 				Node* deleting = deleteQueue.back();
 				deleteQueue.pop_back();
 				for (int j = 0; j < columnCount; ++j) {
-					if (columnTrees[i+j]->getName() == -1) {
+					if (j == 0) {
 						minAvialableIndex.add(deleting->data);
 					}
-					columnTrees[i+j]->deleteNode(deleting, deleting->self);
+					columnTrees[j]->deleteNode(deleting, deleting->self);
 					deleting = deleting->nextField;
 				}
 			}
@@ -123,7 +128,10 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 				}
 			}
 			if (listSize == 0) {
-				std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
+				if (j == 0) 
+					std::cout << deHash(((printing[i]->data)+1), columnTypes[j]) << " "; //ID is 1based but stored 0base
+				else
+					std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
 			}
 			printing[i] = printing[i]->nextField;
 		}
@@ -134,4 +142,35 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 
 long long database::getName() {
 	return name;
+}
+
+void database::sortVector(std::vector<Node*> &input) {
+	std::vector<Node*> tmp;
+	tmp.resize((int)input.size());
+	mergeSort(0, (int)input.size(), input, tmp);
+}
+
+void database::mergeSort(int begin, int end, std::vector<Node*> &input, std::vector<Node*> &tmp) {
+	if (end - begin <= 1)
+		return;
+	
+	int mid = begin + ((end-begin)/2);
+	mergeSort(begin, mid, input, tmp);
+	mergeSort(mid, end, input, tmp);
+
+	for (int i = begin; i < end; ++i)
+		tmp[i] = input[i];
+	
+	int itFirst = begin, itSecond = mid, index = begin;
+	while (itFirst < mid and itSecond < end)
+		if (tmp[itFirst] <= tmp[itSecond])
+			input[index++] = tmp[itFirst++];
+		else
+			input[index++] = tmp[itSecond++];
+	while(itFirst < mid)
+		input[index++] = tmp[itFirst++];
+	while (itSecond < end)
+		input[index++] = tmp[itSecond++];
+	
+	return;
 }

@@ -15,12 +15,14 @@ public:
 	std::vector<Node*> select(Comparisson, long long, long long);
 	void printSelectChunk(Comparisson, std::string, std::string, vector<std::string>&); //..., int* columnList, int listSize
 	long long getName();
+	void sortVector(std::vector<Node*>&);
 private:
 	long long name;
 	int columnCount;
 	Type* columnTypes;
 	BTree** columnTrees;
 	minHeap<long long> minAvialableIndex;
+	void mergeSort(int, int, std::vector<Node*>&, std::vector<Node*>&);
 };
 
 #endif
