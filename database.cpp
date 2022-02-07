@@ -17,7 +17,11 @@ database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	minAvialableIndex.createEmptyTree(1000);
 }
 
-void database::insert(int* newValues) {
+void database::insert(vector<std::string> &inputVector) {
+	int* newValues = new int [(int)inputVector.size()];
+	for (int i = 0; i < (int)inputVector.size(); ++i) {
+		newValues[i] = hashh(inputVector[i], columnTypes[i]);
+	}
 	int newId = columnTrees[0]->size();
 	if (minAvialableIndex.isEmpty() == false) {
 		newId = minAvialableIndex.removeRoot();
@@ -33,12 +37,12 @@ void database::insert(int* newValues) {
 	return;
 }
 
-void database::deleteChunk(Comparisson queryType, int firstOperand, int secondOperand) {
+void database::deleteChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr) {
+	int firstOperand = hashh(firstOperandStr, STRING);
 	for (int i = 0; i < columnCount; ++i) {
-		cerr << columnTrees[i]->getName() << " " << firstOperand << endl;
 		if (columnTrees[i]->getName() == firstOperand) {
+			int secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
-			cerr << "size " << deleteQueue.size() << endl;
 			while(deleteQueue.empty() != true) {
 				Node* deleting = deleteQueue.back();
 				deleteQueue.pop_back();
@@ -56,9 +60,14 @@ void database::deleteChunk(Comparisson queryType, int firstOperand, int secondOp
 	return;
 }
 
-void database::updateChunk(Comparisson queryType, int firstOperand, int secondOperand, int* newData) {
+void database::updateChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr, vector<std::string> &newDataStr) {
+	int* newData = new int [(int)newDataStr.size()];
+	int firstOperand = hashh(firstOperandStr, STRING);
+	for (int i = 0; i < (int)newDataStr.size(); ++i)
+		newData[i] = hashh(newDataStr[i], columnTypes[i+1]);
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == firstOperand) {
+			int secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			for (int j = 0; j < deleteQueue.size(); ++j) {
 				Node* tmp = deleteQueue[j];

@@ -55,7 +55,7 @@ int main() {
 			databaseList.push_back(new database(databaseName, columns.size(), tmp1, tmp2));
 		}
 		else if(parsedWord == "INSERT") {
-			getline(commandLineInput, parsedWord, ' '); // to ignore "TABLE"
+			getline(commandLineInput, parsedWord, ' '); // to ignore INTO
 			getline(commandLineInput, parsedWord, ' '); // current name
 			int tableIndex = 0;
 			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
@@ -68,7 +68,66 @@ int main() {
 			}
 			inputee[0] = inputee[0].substr(1);
 			inputee[inputee.size()-1] = inputee[inputee.size()-1].substr(0, inputee[inputee.size()-1].size()-1);
-			///VALIDATORS HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			databaseList[tableIndex]->insert(inputee);
+		}
+		else if (parsedWord == "DELETE") {
+			getline(commandLineInput, parsedWord, ' '); // to ignore FROM
+			getline(commandLineInput, parsedWord, ' '); // current name
+			int tableIndex = 0;
+			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
+			getline(commandLineInput, parsedWord, ' ');
+			string firstOperand, secondOperand;
+			for (int k = 0; k < (int)parsedWord.size(); ++k) {
+				if (parsedWord[k] == '<') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+1);
+					databaseList[tableIndex]->deleteChunk(SMALLER, firstOperand, secondOperand);
+				} else if (parsedWord[k] == '=') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+2);
+					databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand);
+				} else if (parsedWord[k] == '>') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+1);
+					databaseList[tableIndex]->deleteChunk(BIGGER, firstOperand, secondOperand);
+				}
+			}
+		}
+		else if (parsedWord == "UPDATE") {
+			getline(commandLineInput, parsedWord, ' '); // current name
+			int tableIndex = 0;
+			while(databaseList[tableIndex]->getName() != hashh(parsedWord, STRING)) tableIndex++;
+			getline(commandLineInput, parsedWord, ' '); // to ignore SET
+			getline(commandLineInput, parsedWord, ' ');
+			vector<string> inputee;
+			stringstream inputeeAtt(parsedWord);
+			while(getline(inputeeAtt, parsedWord, ',')) {
+				inputee.push_back(parsedWord);
+			}
+			inputee[0] = inputee[0].substr(1);
+			inputee[inputee.size()-1] = inputee[inputee.size()-1].substr(0, inputee[inputee.size()-1].size()-1);
+			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
+			getline(commandLineInput, parsedWord, ' ');
+			string firstOperand, secondOperand;
+			for (int k = 0; k < (int)parsedWord.size(); ++k) {
+				if (parsedWord[k] == '<') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+1);
+					databaseList[tableIndex]->updateChunk(SMALLER, firstOperand, secondOperand, inputee);
+				} else if (parsedWord[k] == '=') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+2);
+					databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand, inputee);
+				} else if (parsedWord[k] == '>') {
+					firstOperand = parsedWord.substr(0, k);
+					secondOperand = parsedWord.substr(k+1);
+					databaseList[tableIndex]->updateChunk(BIGGER, firstOperand, secondOperand, inputee);
+				}
+			}
+		}
+		else if (parsedWord == "SELECT") {
+
 		}
 	}
 	return 0;

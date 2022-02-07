@@ -4,6 +4,7 @@
 long long hashString(std::string inputString) {
 	long long result = 0;
 	for (int i = 0; i < (int)inputString.size(); ++i) {
+		if ((i == 0 or i == (int)inputString.size()) and inputString[i] == '"') continue;
 		result *= 36;
 		if ('0' <= inputString[i] and inputString[i] >= '9') {
 			result += int(inputString[i] - '0');
