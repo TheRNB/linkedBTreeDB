@@ -65,11 +65,11 @@ Node* BTree::insert(int queryValue) {
         newNode->self = newBTNode;
         newBTNode->addNode(newNode);
         root = newBTNode;
-        return;
+        return newNode;
     }
-    add(queryValue, root);
+    Node* newNode = add(queryValue, root);
     sizee++;
-    return;
+    return newNode;
 }
 
 /*void BTree::deleteSingleNode(Node* queryValue, BTNode* curr) {

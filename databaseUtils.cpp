@@ -1,3 +1,11 @@
+#ifndef _DATABASE_UTILS_
+#define _DATABASE_UTILS_
+
+#include <stdexcept>
+#include <iostream>
+
+using namespace std;
+
 template <typename DataType>
 class minHeap {
 public:
@@ -63,3 +71,4 @@ private:
 	int iterator;
 	int maxSize;
 };
+#endif

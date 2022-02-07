@@ -1,6 +1,8 @@
 const int CHILD_MIN = 3;
 const int CHILD_MAX = 7;
 
+class BTNode;
+
 class Node{
 public:
     long long data;
@@ -10,18 +12,18 @@ public:
 
 class BTNode {
 public:
-    BTNode(int cID, BTNode* par);
-    void addNodeByIndex(Node* newNode, int posID = 0); // SOLELY IN THIS BTNode
-    int addNode(Node* newNode);
-    void delNode(int posID = 0); // SOLELY IN THIS BTNode
-    void setChild(BTNode* child, int posID = 0);
-    void setParent(BTNode* newParent);
-    void setKey(Node* newKey, int posID = 0);
-    void BTNode::setParentIndex(int newIndex);
+    BTNode(int, BTNode*); //int cID, BTNode* par
+    void addNodeByIndex(Node*, int); // SOLELY IN THIS BTNode
+    int addNode(Node*);
+    void delNode(int); // SOLELY IN THIS BTNode
+    void setChild(BTNode*, int);
+    void setParent(BTNode*);
+    void setKey(Node*, int);
+    //void BTNode::setParentIndex(int);
     int size();
     int index();
-    Node* getKey(int posID = 0);
-    BTNode* getChild(int posIS = 0);
+    Node* getKey(int);
+    BTNode* getChild(int);
     BTNode* getParent();
 private:
     Node* keys[CHILD_MAX + 2];

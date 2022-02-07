@@ -35,7 +35,7 @@ long long hashDate(std::string inputString) {
 	return result;
 }
 
-long long hash(std::string inputString, Type inputType) {
+long long hashh(std::string inputString, Type inputType) {
 	if (inputType == STRING) {
 		return hashString(inputString);
 	} else if (inputType == INTEGER) {
@@ -89,3 +89,4 @@ std::string deHash(long long inputString, Type inputType) {
 		return deHashDate(inputString);
 	}
 }
+

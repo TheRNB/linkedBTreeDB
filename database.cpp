@@ -1,8 +1,7 @@
-#include "database.h"
+#include "hashUtils.h"
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include "hashUtils.cpp"
 
 database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	name = newName;
@@ -100,7 +99,6 @@ void database::printSelectChunk(Comparisson queryType, int firstOperand, int sec
 		for (int j = 0; j < columnCount; ++j) {
 			for (int k = 0; k < listSize; ++k) {
 				if (listSize == 0 or columnTrees[j]->getName() == columnList[k]) {
-					//SHOULD DEHASH THE DATA TO PRINT LATER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 					std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
 					break;
 				}
