@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-database::database(int newName, int sz, Type* newTypes, int* columnNames) {
+database::database(long long newName, int sz, Type* newTypes, long long* columnNames) {
 	name = newName;
 	columnCount = sz+1;
 	columnTypes = new Type[columnCount];
@@ -14,11 +14,11 @@ database::database(int newName, int sz, Type* newTypes, int* columnNames) {
 	for (int i = 1; i <= sz; ++i) {
 		columnTrees[i] = new BTree(columnNames[i-1]);
 	}
-	minAvialableIndex.createEmptyTree(1000);
+	minAvialableIndex.createEmptyTree(MAXN);
 }
 
 void database::insert(vector<std::string> &inputVector) {
-	int* newValues = new int [(int)inputVector.size()];
+	long long* newValues = new long long [(int)inputVector.size()];
 	for (int i = 0; i < (int)inputVector.size(); ++i) {
 		newValues[i] = hashh(inputVector[i], columnTypes[i]);
 	}
@@ -38,10 +38,10 @@ void database::insert(vector<std::string> &inputVector) {
 }
 
 void database::deleteChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr) {
-	int firstOperand = hashh(firstOperandStr, STRING);
+	long long firstOperand = hashh(firstOperandStr, STRING);
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == firstOperand) {
-			int secondOperand = hashh(secondOperandStr, columnTypes[i]);
+			long long secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			while(deleteQueue.empty() != true) {
 				Node* deleting = deleteQueue.back();
@@ -61,13 +61,13 @@ void database::deleteChunk(Comparisson queryType, std::string firstOperandStr, s
 }
 
 void database::updateChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr, vector<std::string> &newDataStr) {
-	int* newData = new int [(int)newDataStr.size()];
-	int firstOperand = hashh(firstOperandStr, STRING);
+	long long* newData = new long long [(int)newDataStr.size()];
+	long long firstOperand = hashh(firstOperandStr, STRING);
 	for (int i = 0; i < (int)newDataStr.size(); ++i)
 		newData[i] = hashh(newDataStr[i], columnTypes[i+1]);
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == firstOperand) {
-			int secondOperand = hashh(secondOperandStr, columnTypes[i]);
+			long long secondOperand = hashh(secondOperandStr, columnTypes[i]);
 			std::vector<Node*> deleteQueue = columnTrees[i]->search(secondOperand, queryType);
 			for (int j = 0; j < deleteQueue.size(); ++j) {
 				Node* tmp = deleteQueue[j];
@@ -90,7 +90,7 @@ void database::updateChunk(Comparisson queryType, std::string firstOperandStr, s
 	return;
 }
 
-std::vector<Node*> database::select(Comparisson queryType, int firstOperand, int secondOperand) {
+std::vector<Node*> database::select(Comparisson queryType, long long firstOperand, long long secondOperand) {
 	std::vector<Node*> searchQueue;
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == firstOperand) {
@@ -132,6 +132,6 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 	return;
 }
 
-int database::getName() {
+long long database::getName() {
 	return name;
 }

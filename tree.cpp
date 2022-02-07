@@ -1,13 +1,13 @@
 #include "tree.h"
 #include<iostream>
 
-BTree::BTree (int cName){
+BTree::BTree (long long cName){
     root = NULL;
     columnName = cName;
     sizee = 0;
 }
 
-Node* BTree::add(int queryValue, BTNode* curr, BTNode* parent) {
+Node* BTree::add(long long queryValue, BTNode* curr, BTNode* parent) {
     if (curr == NULL) {
         Node* newNode = new Node();
         newNode->data = queryValue;
@@ -57,7 +57,7 @@ Node* BTree::add(int queryValue, BTNode* curr, BTNode* parent) {
     return result;
 }
 
-Node* BTree::insert(int queryValue) {
+Node* BTree::insert(long long queryValue) {
     sizee++;
     if (root == NULL) {
         BTNode* newBTNode = new BTNode(columnName, NULL);
@@ -249,7 +249,7 @@ void BTree::deleteNode(Node* queryValue, BTNode* curr) {
     return;
 }
 
-std::vector<Node*> BTree::search(int queryValue, Comparisson queryType) {
+std::vector<Node*> BTree::search(long long queryValue, Comparisson queryType) {
     std::vector<Node*> result;
     if (root == NULL)
         return result;
@@ -312,6 +312,6 @@ int BTree::size() {
     return sizee;
 }
 
-int BTree::getName() {
+long long BTree::getName() {
     return columnName;
 }

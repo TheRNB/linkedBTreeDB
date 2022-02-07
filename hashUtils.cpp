@@ -7,10 +7,10 @@ long long hashString(std::string inputString) {
 		if ((i == 0 or i == (int)inputString.size()) and inputString[i] == '"') continue;
 		result *= 36;
 		if ('0' <= inputString[i] and inputString[i] >= '9') {
-			result += int(inputString[i] - '0');
+			result += (long long)(inputString[i] - '0');
 		}
 		else {
-			result += (int(inputString[i] - 'a') + 10);
+			result += ((long long)(inputString[i] - 'a') + 10);
 		}
 	}
 	return result;
@@ -20,7 +20,7 @@ long long hashInteger(std::string inputString) {
 	long long result = 0;
 	for (int i = 0; i < (int)inputString.size(); ++i) {
 		result *= 10;
-		result += int(inputString[i] - '0');
+		result += (long long)(inputString[i] - '0');
 	}
 	return result;
 }
@@ -31,7 +31,7 @@ long long hashDate(std::string inputString) {
 		if (inputString[i] == '/')
 			continue;
 		result *= 10;
-		result += int(inputString[i] - '0');
+		result += (long long)(inputString[i] - '0');
 	}
 	return result;
 }

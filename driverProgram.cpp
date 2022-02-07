@@ -28,7 +28,7 @@ int main() {
 		if (parsedWord == "CREATE") {
 			getline(commandLineInput, parsedWord, ' '); // to ignore "TABLE"
 			getline(commandLineInput, parsedWord, ' '); // current name
-			int databaseName = hashh(parsedWord, Type(STRING));
+			long long databaseName = hashh(parsedWord, Type(STRING));
 			vector<long long> columns;
 			vector<Type> types;
 			while (getline(commandLineInput, parsedWord, ',')) {
@@ -43,21 +43,24 @@ int main() {
 				if(parsedWord[parsedWord.size()-1] == ')') {
 					parsedWord = parsedWord.substr(0, parsedWord.size()-1);
 				}
+				cerr << "parsedType is " << parsedWord << endl;
 				if (parsedWord == "string") {
 					types.push_back(Type(STRING));
 				} else if (parsedWord == "timestamp") {
 					types.push_back(Type(DATE));
-				} else {
+				} else if (parsedWord == "int"){
 					types.push_back(Type(INTEGER));
 				}
 			}
 			Type* tmp1 = new Type [columns.size()];
-			int* tmp2 = new int [columns.size()];
+			long long* tmp2 = new long long [columns.size()];
 			for (int i = 0; i < columns.size(); ++i) {
 				tmp1[i] = types[i];
 				tmp2[i] = columns[i];
 			}
 			cerr << "here " << databaseName << " " << columns.size() << endl;
+			for (int i = 0; i < types.size(); ++i) cout << types[i] << " ";
+			cout << endl;
 			databaseList.push_back(new database(databaseName, columns.size(), tmp1, tmp2));
 		}
 		else if(parsedWord == "INSERT") {

@@ -8,19 +8,19 @@ enum Type {STRING=0, INTEGER, DATE};
 
 class database{
 public:
-	database(int, int, Type*, int*); //int newName, int sz, Type* newTypes, int* columnNames
+	database(long long, int, Type*, long long*); //int newName, int sz, Type* newTypes, int* columnNames
 	void insert(vector<std::string>&); //int* newValues
 	void deleteChunk(Comparisson, std::string, std::string);//Comparisson queryType, int firstOperand, int secondOperand
 	void updateChunk(Comparisson, std::string, std::string, vector<std::string>&);//Comparisson queryType, int firstOperand, int secondOperand, int* data
-	std::vector<Node*> select(Comparisson, int, int);
+	std::vector<Node*> select(Comparisson, long long, long long);
 	void printSelectChunk(Comparisson, std::string, std::string, vector<std::string>&); //..., int* columnList, int listSize
-	int getName();
+	long long getName();
 private:
-	int name;
+	long long name;
 	int columnCount;
 	Type* columnTypes;
 	BTree** columnTrees;
-	minHeap<int> minAvialableIndex;
+	minHeap<long long> minAvialableIndex;
 };
 
 #endif
