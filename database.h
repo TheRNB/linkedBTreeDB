@@ -14,7 +14,7 @@ public:
 	void updateChunk(Comparisson, int, int, int*);//Comparisson queryType, int firstOperand, int secondOperand, int* data
 	std::vector<Node*> select(Comparisson, int, int);
 	void printSelectChunk(Comparisson, int, int, int*, int); //..., int* columnList, int listSize
-private:
+
 	int name;
 	int columnCount;
 	Type* columnTypes;

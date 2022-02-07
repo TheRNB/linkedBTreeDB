@@ -243,10 +243,17 @@ void BTree::deleteSingleNode(Node* queryValue, BTNode* curr) {
     return;
 }
 
+void BTree::deleteNode(Node* queryValue, BTNode* curr) {
+    sizee--;
+    deleteSingleNode(queryValue, curr);
+    return;
+}
+
 std::vector<Node*> BTree::search(int queryValue, Comparisson queryType) {
     std::vector<Node*> result;
     if (root == NULL)
         return result;
+
     std::queue<BTNode*> searchNode;
     searchNode.push(root);
     BTNode* curr;
@@ -255,33 +262,46 @@ std::vector<Node*> BTree::search(int queryValue, Comparisson queryType) {
         searchNode.pop();
         if (curr == NULL) continue;
             
-        if (queryType == SMALLER or queryType == BIGGER) {
+        if (queryType == SMALLER or queryType == EQUAL) {
             for (int i = 0; i < curr->size(); ++i) {
-                if (queryType == SMALLER)
-                    if (curr->getKey(i)->data < queryValue)
+                if (queryType == SMALLER) {
+                    if (curr->getKey(i)->data < queryValue) {
                         result.push_back(curr->getKey(i));
-                    else
+                        searchNode.push(curr->getChild(i));
+                    } else {
+                        searchNode.push(curr->getChild(i));
                         break;
-                
-                else if (queryType == EQUAL)
-                    if (curr->getKey(i)->data == queryValue)
+                    }
+                    if (i == curr->size()-1) {
+                        searchNode.push(curr->getChild(i+1));
+                    }
+                } else if (queryType == EQUAL) {
+                    if (curr->getKey(i)->data == queryValue) {
                         result.push_back(curr->getKey(i));
+                        searchNode.push(curr->getChild(i));
+                    } else if (curr->getKey(i)->data > queryValue) {
+                        searchNode.push(curr->getChild(i));
+                        break;                    
+                    }
+                    if (i == curr->size()-1) {
+                        searchNode.push(curr->getChild(i+1));
+                    }
+                }
+                
 
-                searchNode.push(curr->getChild(i));
-                if (i == curr->size()-1)
-                    searchNode.push(curr->getChild(i+1));
             }
-        }
-        else if (queryType == BIGGER) {
+        } else if (queryType == BIGGER) {
             for (int i = curr->size()-1; i >= 0; --i) {
-                if (curr->getKey(i)->data > queryValue)
+                if (curr->getKey(i)->data > queryValue) {
+                    searchNode.push(curr->getChild(i+1));
                     result.push_back(curr->getKey(i));
-                else
+                } else {
+                    searchNode.push(curr->getChild(i+1));
                     break;
-
-                searchNode.push(curr->getChild(i+1));
-                if (i == 0)
+                }
+                if (i == 0) {
                     searchNode.push(curr->getChild(i));
+                }
             }
         }
     }

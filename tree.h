@@ -10,12 +10,13 @@ public:
     BTree (int cName);
     std::vector<Node*> search(int, Comparisson); //int queryValue, Comparisson queryType
     Node* insert(int); //int queryValue
-    void deleteSingleNode(Node*, BTNode*); //Node* queryValue, BTNode* curr
+    void deleteNode(Node*, BTNode*);
     int size();
     int getName();
-    BTNode* root;
 private:
+    BTNode* root;
     int columnName; // 0 means ID column
     int sizee;
     Node* add(int, BTNode*, BTNode*); //int queryValue, BTNode* curr
+    void deleteSingleNode(Node*, BTNode*); //Node* queryValue, BTNode* curr
 };
