@@ -1,6 +1,6 @@
 #include <string>
-const int CHILD_MIN = 3;
-const int CHILD_MAX = 7;
+const int CHILD_MIN = 7;
+const int CHILD_MAX = 13;
 const int MAXN = 1e4;
 
 class BTNode;

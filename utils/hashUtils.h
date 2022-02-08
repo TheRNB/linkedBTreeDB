@@ -2,7 +2,7 @@
 #define _HASH_UTILS_
 
 #include <string>
-#include "database.h"
+#include "../database.h"
 
 long long hashString(std::string);
 

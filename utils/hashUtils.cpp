@@ -1,5 +1,5 @@
 #include <string>
-#include "database.h"
+#include "../database.h"
 
 long long hashString(std::string inputString) {
 	long long result = 0;

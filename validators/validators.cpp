@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "utils/hashUtils.h"
+#include "../utils/hashUtils.h"
 #include <iostream>
 
 bool validator_int(std::string input) {
@@ -41,7 +41,7 @@ bool validator_date(std::string input) {
 
 bool validator_string(std::string input) {
 	for (int i = 0; i < input.size(); ++i) {
-		if ((input[i] > 'z' or input[i] < 'a') and (input[i] > '9' or input[i] < '0'))
+		if ((input[i] > 'z' or input[i] < 'a') and (input[i] > '9' or input[i] < '0') and input[i] != '\"')
 			return false;
 	}
 	return true;
@@ -69,8 +69,9 @@ bool validator_command_create (std::string input) {
 	std::string validInputs[] = {"CREATE", "TABLE", "", ""};
 	for (int i = 0; i < 3; ++i) {
 		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[0])
+		if (validInputs[i] != "" and parse != validInputs[i]) {
 			return false;
+		}
 	}
 	getline(cin, parse, ' ');
 	stringstream kwargs(parse);
@@ -90,7 +91,7 @@ bool validator_command_insert (std::string input) {
 	std::string validInputs[] = {"INSERT", "INTO", "", "VALUE", ""};
 	for (int i = 0; i < 4; ++i) {
 		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[0])
+		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
 	return true;
@@ -103,7 +104,7 @@ bool validator_command_delete (std::string input) {
 	std::string validInputs[] = {"DELETE", "FROM", "", "WHERE", ""};
 	for (int i = 0; i < 4; ++i) {
 		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[0])
+		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
 	return true;
@@ -116,7 +117,7 @@ bool validator_command_update (std::string input) {
 	std::string validInputs[] = {"UPDATE", "", "SET", "", "WHERE", ""};
 	for (int i = 0; i < 5; ++i) {
 		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[0])
+		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
 	return true;
@@ -129,13 +130,14 @@ bool validator_command_select (std::string input) {
 	std::string validInputs[] = {"SELECT", "", "FROM", "", "WHERE", ""};
 	for (int i = 0; i < 5; ++i) {
 		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[0])
+		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
 	return true;
 }
 
-bool validator_command (std::string input) {
+void validator_command (std::string input) {
+	cerr << input << endl << endl;
 	if (input[0] == 'S') {
 		if (validator_command_select(input) == false)
 			throw std::invalid_argument("the SELECT command was not recognized");
@@ -146,10 +148,10 @@ bool validator_command (std::string input) {
 		if (validator_command_delete(input) == false)
 			throw std::invalid_argument("the DELETE command was not recognized");
 	}  else if (input[0] == 'I') {
-		if (validator_command_update(input) == false)
+		if (validator_command_insert(input) == false)
 			throw std::invalid_argument("the INSERT command was not recognized");
 	}  else if (input[0] == 'C') {
-		if (validator_command_update(input) == false)
+		if (validator_command_create(input) == false)
 			throw std::invalid_argument("the CREATE command was not recognized");
 	} else {
 		throw std::invalid_argument("the command was not recognized");
