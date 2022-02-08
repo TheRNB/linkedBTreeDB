@@ -1,5 +1,5 @@
 #include "database.h"
-#include "hashUtils.h"
+#include "utils/hashUtils.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -170,6 +170,7 @@ int main() {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
 					databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand);
+					break;
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);
@@ -202,6 +203,7 @@ int main() {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+2);
 					databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand, inputee);
+					break;
 				} else if (parsedWord[k] == '>') {
 					firstOperand = parsedWord.substr(0, k);
 					secondOperand = parsedWord.substr(k+1);

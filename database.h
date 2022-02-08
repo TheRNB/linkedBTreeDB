@@ -2,7 +2,7 @@
 #define _DATABASE_
 
 #include "tree.h"
-#include "databaseUtils.cpp"
+#include "utils/databaseUtils.cpp"
 
 enum Type {STRING=0, INTEGER, DATE};
 

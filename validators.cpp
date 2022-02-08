@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
-#include "hashUtils.h"
+#include "utils/hashUtils.h"
 #include <iostream>
 
 bool validator_int(std::string input) {
