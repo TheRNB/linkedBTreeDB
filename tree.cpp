@@ -1,7 +1,7 @@
 #include "tree.h"
 #include<iostream>
 
-BTree::BTree (long long cName){
+BTree::BTree (std::string cName){
     root = NULL;
     columnName = cName;
     sizee = 0;
@@ -312,6 +312,6 @@ int BTree::size() {
     return sizee;
 }
 
-long long BTree::getName() {
+std::string BTree::getName() {
     return columnName;
 }

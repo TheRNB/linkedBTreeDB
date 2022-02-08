@@ -1,5 +1,6 @@
 #include "database.h"
 #include "utils/hashUtils.h"
+#include "validators.cpp"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -97,6 +98,7 @@ int main() {
 	cin.ignore();
 	while (qCnt--) {
 		getline(cin, inputLine);
+		validator_command(cleanInput(inputLine));
 		stringstream commandLineInput(cleanInput(inputLine));
 		string parsedWord;
 		getline(commandLineInput, parsedWord, ' ');
@@ -104,15 +106,15 @@ int main() {
 			getline(commandLineInput, parsedWord, ' '); // to ignore "TABLE"
 			getline(commandLineInput, parsedWord, ' '); // current name
 			string databaseName = parsedWord;
-			vector<long long> columns;
+			vector<string> columns;
 			vector<Type> types;
 			while (getline(commandLineInput, parsedWord, ',')) {
 				stringstream column(parsedWord);
 				getline(column, parsedWord, ' ');
 				if(parsedWord[0] == '(') {
-					columns.push_back(hashh(parsedWord.substr(1), Type(STRING)));
+					columns.push_back(parsedWord.substr(1));
 				} else {
-					columns.push_back(hashh(parsedWord, Type(STRING)));
+					columns.push_back(parsedWord);
 				}
 				getline(column, parsedWord, ' ');
 				if(parsedWord[parsedWord.size()-1] == ')') {
@@ -127,7 +129,7 @@ int main() {
 				}
 			}
 			Type* tmp1 = new Type [columns.size()];
-			long long* tmp2 = new long long [columns.size()];
+			string* tmp2 = new string [columns.size()];
 			for (int i = 0; i < columns.size(); ++i) {
 				tmp1[i] = types[i];
 				tmp2[i] = columns[i];
@@ -160,21 +162,65 @@ int main() {
 			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
 			getline(commandLineInput, parsedWord, ' ');
-			string firstOperand, secondOperand;
-			for (int k = 0; k < (int)parsedWord.size(); ++k) {
-				if (parsedWord[k] == '<') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->deleteChunk(SMALLER, firstOperand, secondOperand);
-				} else if (parsedWord[k] == '=') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+2);
-					databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand);
-					break;
-				} else if (parsedWord[k] == '>') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->deleteChunk(BIGGER, firstOperand, secondOperand);
+			string firstOperand, secondOperand, firstTwoOperand, secondTwoOperand, query;
+			getline(commandLineInput, query, ' ');
+			if (query == "&" or query == "|") {
+				multiCondition tmp;
+				if (query == "&")
+					tmp = AND;
+				else
+					tmp = OR;
+
+				Comparisson firstQ;
+				getline(commandLineInput, query, ' ');
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<' ) {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = SMALLER;
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						firstQ = EQUAL;
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = BIGGER;
+					}
+				}
+				for (int k = 0; k < (int)query.size(); ++k) {
+					if (query[k] == '<') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->deleteChunk(firstQ, firstOperand, secondOperand, tmp, SMALLER, firstTwoOperand, secondTwoOperand);
+					} else if (query[k] == '=') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+2);
+						databaseList[tableIndex]->deleteChunk(firstQ, firstOperand, secondOperand, tmp, EQUAL, firstTwoOperand, secondTwoOperand);
+						break;
+					} else if (query[k] == '>') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->deleteChunk(firstQ, firstOperand, secondOperand, tmp, BIGGER, firstTwoOperand, secondTwoOperand);
+					}
+				}
+			} else {
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->deleteChunk(SMALLER, firstOperand, secondOperand, NONE, SMALLER, firstOperand, secondOperand);
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						databaseList[tableIndex]->deleteChunk(EQUAL, firstOperand, secondOperand, NONE, SMALLER, firstOperand, secondOperand);
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->deleteChunk(BIGGER, firstOperand, secondOperand, NONE, SMALLER, firstOperand, secondOperand);
+					}
 				}
 			}
 		}
@@ -193,21 +239,65 @@ int main() {
 			inputee[inputee.size()-1] = inputee[inputee.size()-1].substr(0, inputee[inputee.size()-1].size()-1);
 			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
 			getline(commandLineInput, parsedWord, ' ');
-			string firstOperand, secondOperand;
-			for (int k = 0; k < (int)parsedWord.size(); ++k) {
-				if (parsedWord[k] == '<') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->updateChunk(SMALLER, firstOperand, secondOperand, inputee);
-				} else if (parsedWord[k] == '=') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+2);
-					databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand, inputee);
-					break;
-				} else if (parsedWord[k] == '>') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->updateChunk(BIGGER, firstOperand, secondOperand, inputee);
+			string firstOperand, secondOperand, firstTwoOperand, secondTwoOperand, query;
+			getline(commandLineInput, query, ' ');
+			if (query == "&" or query == "|") {
+				multiCondition tmp;
+				if (query == "&")
+					tmp = AND;
+				else
+					tmp = OR;
+
+				Comparisson firstQ;
+				getline(commandLineInput, query, ' ');
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<' ) {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = SMALLER;
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						firstQ = EQUAL;
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = BIGGER;
+					}
+				}
+				for (int k = 0; k < (int)query.size(); ++k) {
+					if (query[k] == '<') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->updateChunk(firstQ, firstOperand, secondOperand, inputee, tmp, SMALLER, firstTwoOperand, secondTwoOperand);
+					} else if (query[k] == '=') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+2);
+						databaseList[tableIndex]->updateChunk(firstQ, firstOperand, secondOperand,  inputee,tmp, EQUAL, firstTwoOperand, secondTwoOperand);
+						break;
+					} else if (query[k] == '>') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->updateChunk(firstQ, firstOperand, secondOperand,  inputee, tmp, BIGGER, firstTwoOperand, secondTwoOperand);
+					}
+				}
+			} else {
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->updateChunk(SMALLER, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						databaseList[tableIndex]->updateChunk(EQUAL, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->updateChunk(BIGGER, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+					}
 				}
 			}
 		}
@@ -229,23 +319,65 @@ int main() {
 			while(databaseList[tableIndex]->getName() != parsedWord) tableIndex++;
 			getline(commandLineInput, parsedWord, ' '); // to ignore WHERE
 			getline(commandLineInput, parsedWord, ' ');
-			string firstOperand, secondOperand;
-			for (int k = 0; k < (int)parsedWord.size(); ++k) {
-				if (parsedWord[k] == '<') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->printSelectChunk(SMALLER, firstOperand, secondOperand, inputee);
-					break;
-				} else if (parsedWord[k] == '=') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+2);
-					databaseList[tableIndex]->printSelectChunk(EQUAL, firstOperand, secondOperand, inputee);
-					break;
-				} else if (parsedWord[k] == '>') {
-					firstOperand = parsedWord.substr(0, k);
-					secondOperand = parsedWord.substr(k+1);
-					databaseList[tableIndex]->printSelectChunk(BIGGER, firstOperand, secondOperand, inputee);
-					break;
+			string firstOperand, secondOperand, firstTwoOperand, secondTwoOperand, query;
+			getline(commandLineInput, query, ' ');
+			if (query == "&" or query == "|") {
+				multiCondition tmp;
+				if (query == "&")
+					tmp = AND;
+				else
+					tmp = OR;
+
+				Comparisson firstQ;
+				getline(commandLineInput, query, ' ');
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<' ) {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = SMALLER;
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						firstQ = EQUAL;
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						firstQ = BIGGER;
+					}
+				}
+				for (int k = 0; k < (int)query.size(); ++k) {
+					if (query[k] == '<') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->printSelectChunk(firstQ, firstOperand, secondOperand, inputee, tmp, SMALLER, firstTwoOperand, secondTwoOperand);
+					} else if (query[k] == '=') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+2);
+						databaseList[tableIndex]->printSelectChunk(firstQ, firstOperand, secondOperand,  inputee,tmp, EQUAL, firstTwoOperand, secondTwoOperand);
+						break;
+					} else if (query[k] == '>') {
+						firstTwoOperand = query.substr(0, k);
+						secondTwoOperand = query.substr(k+1);
+						databaseList[tableIndex]->printSelectChunk(firstQ, firstOperand, secondOperand,  inputee, tmp, BIGGER, firstTwoOperand, secondTwoOperand);
+					}
+				}
+			} else {
+				for (int k = 0; k < (int)parsedWord.size(); ++k) {
+					if (parsedWord[k] == '<') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->printSelectChunk(SMALLER, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+					} else if (parsedWord[k] == '=') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+2);
+						databaseList[tableIndex]->printSelectChunk(EQUAL, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+						break;
+					} else if (parsedWord[k] == '>') {
+						firstOperand = parsedWord.substr(0, k);
+						secondOperand = parsedWord.substr(k+1);
+						databaseList[tableIndex]->printSelectChunk(BIGGER, firstOperand, secondOperand,  inputee, NONE, SMALLER, firstOperand, secondOperand);
+					}
 				}
 			}
 		}

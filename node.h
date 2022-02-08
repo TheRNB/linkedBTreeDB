@@ -1,3 +1,4 @@
+#include <string>
 const int CHILD_MIN = 3;
 const int CHILD_MAX = 7;
 const int MAXN = 1e4;
@@ -13,7 +14,7 @@ public:
 
 class BTNode {
 public:
-    BTNode(long long, BTNode*); //int cID, BTNode* par
+    BTNode(std::string, BTNode*); //int cID, BTNode* par
     void addNodeByIndex(Node*, int); // SOLELY IN THIS BTNode
     int addNode(Node*);
     void delNode(int); // SOLELY IN THIS BTNode
@@ -32,5 +33,5 @@ private:
     //int parentIndex; //index of the this node among its parent
     BTNode* parent;
     int sizee;
-    long long columnName;
+    std::string columnName;
 };

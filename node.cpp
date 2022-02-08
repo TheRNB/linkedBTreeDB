@@ -1,7 +1,7 @@
 #include "node.h"
 #include <cstddef>
 
-BTNode::BTNode(long long cID, BTNode* par = NULL) {
+BTNode::BTNode(std::string cID, BTNode* par = NULL) {
     sizee = 0;
     //parentIndex = -1;
     for (int i = 0; i < CHILD_MAX; ++i) {
