@@ -68,19 +68,20 @@ bool validator_command_create (std::string input) {
 	std::string parse;
 	std::string validInputs[] = {"CREATE", "TABLE", "", ""};
 	for (int i = 0; i < 3; ++i) {
-		getline(cin, parse, ' ');
+		getline(command, parse, ' ');
 		if (validInputs[i] != "" and parse != validInputs[i]) {
+			cerr << validInputs[i] << " " << parse << endl;
 			return false;
 		}
 	}
-	getline(cin, parse, ' ');
+	/*getline(command, parse, ' ');
 	stringstream kwargs(parse);
 	while(getline(kwargs, parse, ',')) {
 		stringstream arg(parse);
 		getline(arg, parse, ' ');
 		getline(arg, parse);
 		return false;
-	}
+	}*/
 	return true;
 }
 
@@ -88,11 +89,12 @@ bool validator_command_create (std::string input) {
 bool validator_command_insert (std::string input) {
 	stringstream command(input);
 	std::string parse;
-	std::string validInputs[] = {"INSERT", "INTO", "", "VALUE", ""};
+	std::string validInputs[] = {"INSERT", "INTO", "", "VALUES", ""};
 	for (int i = 0; i < 4; ++i) {
-		getline(cin, parse, ' ');
-		if (validInputs[i] != "" and parse != validInputs[i])
+		getline(command, parse, ' ');
+		if (validInputs[i] != "" and parse != validInputs[i]) {
 			return false;
+		}
 	}
 	return true;
 }
@@ -103,7 +105,7 @@ bool validator_command_delete (std::string input) {
 	std::string parse;
 	std::string validInputs[] = {"DELETE", "FROM", "", "WHERE", ""};
 	for (int i = 0; i < 4; ++i) {
-		getline(cin, parse, ' ');
+		getline(command, parse, ' ');
 		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
@@ -116,7 +118,7 @@ bool validator_command_update (std::string input) {
 	std::string parse;
 	std::string validInputs[] = {"UPDATE", "", "SET", "", "WHERE", ""};
 	for (int i = 0; i < 5; ++i) {
-		getline(cin, parse, ' ');
+		getline(command, parse, ' ');
 		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
@@ -129,7 +131,7 @@ bool validator_command_select (std::string input) {
 	std::string parse;
 	std::string validInputs[] = {"SELECT", "", "FROM", "", "WHERE", ""};
 	for (int i = 0; i < 5; ++i) {
-		getline(cin, parse, ' ');
+		getline(command, parse, ' ');
 		if (validInputs[i] != "" and parse != validInputs[i])
 			return false;
 	}
@@ -137,7 +139,6 @@ bool validator_command_select (std::string input) {
 }
 
 void validator_command (std::string input) {
-	cerr << input << endl << endl;
 	if (input[0] == 'S') {
 		if (validator_command_select(input) == false)
 			throw std::invalid_argument("the SELECT command was not recognized");

@@ -98,6 +98,7 @@ int main() {
 	cin.ignore();
 	while (qCnt--) {
 		getline(cin, inputLine);
+		validator_command(cleanInput(inputLine));
 		stringstream commandLineInput(cleanInput(inputLine));
 		string parsedWord;
 		getline(commandLineInput, parsedWord, ' ');
