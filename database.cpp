@@ -1,4 +1,5 @@
 #include "utils/hashUtils.h"
+#include "validators.cpp"
 #include <vector>
 #include <iostream>
 
@@ -20,6 +21,7 @@ database::database(std::string newName, int sz, Type* newTypes, std::string* col
 void database::insert(vector<std::string> &inputVector) {
 	long long* newValues = new long long [(int)inputVector.size()];
 	for (int i = 0; i < (int)inputVector.size(); ++i) {
+		validator_inputField(inputVector[i], columnTypes[i+1]);
 		newValues[i] = hashh(inputVector[i], columnTypes[i+1]);
 	}
 	int newId = columnTrees[0]->size();
