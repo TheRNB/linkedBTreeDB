@@ -42,22 +42,23 @@ void database::insert(vector<std::string> &inputVector) {
 void database::deleteChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr, multiCondition inclusionType, Comparisson queryTwoType, std::string firstTwoOperand, std::string secondTwoOperand) {
 	long long firstOperand = hashh(firstOperandStr, STRING);
 	for (int i = 0; i < columnCount; ++i) {
-		for (int j = 0; j < columnCount; ++j) {
-			if (columnTrees[i]->getName() == firstOperandStr and columnTrees[j]->getName() == firstTwoOperand) {
-				std::vector<Node*> deleteQueue = select(queryType, firstOperandStr, hashh(secondOperandStr, columnTypes[i]), inclusionType, queryTwoType, firstTwoOperand, hashh(secondTwoOperand, columnTypes[j]));
-				
-				while(deleteQueue.empty() != true) {
-					Node* deleting = deleteQueue.back();
-					deleteQueue.pop_back();
-					for (int j = 0; j < columnCount; ++j) {
-						if (j == 0) {
-							minAvialableIndex.add(deleting->data);
+		if (columnTrees[i]->getName() == firstOperandStr) {
+			for (int j = 0; j < columnCount; ++j) {
+				if (columnTrees[j]->getName() == firstTwoOperand or inclusionType == NONE) {
+					std::vector<Node*> deleteQueue = select(queryType, firstOperandStr, hashh(secondOperandStr, columnTypes[i]), inclusionType, queryTwoType, firstTwoOperand, hashh(secondTwoOperand, columnTypes[j]));
+					while(deleteQueue.empty() != true) {
+						Node* deleting = deleteQueue.back();
+						deleteQueue.pop_back();
+						for (int j = 0; j < columnCount; ++j) {
+							if (j == 0) {
+								minAvialableIndex.add(deleting->data);
+							}
+							columnTrees[j]->deleteNode(deleting, deleting->self);
+							deleting = deleting->nextField;
 						}
-						columnTrees[j]->deleteNode(deleting, deleting->self);
-						deleting = deleting->nextField;
 					}
+					return;
 				}
-				return;
 			}
 		}
 	}
@@ -70,21 +71,23 @@ void database::updateChunk(Comparisson queryType, std::string firstOperandStr, s
 	for (int i = 0; i < (int)newDataStr.size(); ++i)
 		newData[i] = hashh(newDataStr[i], columnTypes[i+1]);
 	for (int i = 0; i < columnCount; ++i) {
-		for (int m = 0; m < columnCount; ++m) {
-			if (columnTrees[i]->getName() == firstOperandStr and columnTrees[m]->getName() == firstTwoOperand) {
-				std::vector<Node*> deleteQueue = select(queryType, firstOperandStr, hashh(secondOperandStr, columnTypes[i]), inclusionType, queryTwoType, firstTwoOperand, hashh(secondTwoOperand, columnTypes[m]));
-				for (int j = 0; j < deleteQueue.size(); ++j) {
-					Node* tmp = deleteQueue[j];
-					Node* tmp1 = tmp->nextField;
-					Node* tmp2 = tmp1->nextField;
-					for (int k = 0; k < columnCount-1; ++k) {
-						columnTrees[k+1]->deleteNode(tmp1, tmp1->self);
-						tmp->nextField = columnTrees[k+1]->insert(newData[k]);
-						tmp = tmp->nextField;
-						tmp1 = tmp2;
-						tmp2 = tmp2->nextField;
+		if (columnTrees[i]->getName() == firstOperandStr) {
+			for (int m = 0; m < columnCount; ++m) {
+				if (columnTrees[m]->getName() == firstTwoOperand or inclusionType == NONE) {
+					std::vector<Node*> deleteQueue = select(queryType, firstOperandStr, hashh(secondOperandStr, columnTypes[i]), inclusionType, queryTwoType, firstTwoOperand, hashh(secondTwoOperand, columnTypes[m]));
+					for (int j = 0; j < deleteQueue.size(); ++j) {
+						Node* tmp = deleteQueue[j];
+						Node* tmp1 = tmp->nextField;
+						Node* tmp2 = tmp1->nextField;
+						for (int k = 0; k < columnCount-1; ++k) {
+							columnTrees[k+1]->deleteNode(tmp1, tmp1->self);
+							tmp->nextField = columnTrees[k+1]->insert(newData[k]);
+							tmp = tmp->nextField;
+							tmp1 = tmp2;
+							tmp2 = tmp2->nextField;
+						}
+						tmp->nextField = deleteQueue[j];
 					}
-					tmp->nextField = deleteQueue[j];
 				}
 			}
 		}
@@ -105,11 +108,10 @@ std::vector<Node*> database::select(Comparisson queryType, std::string firstOper
 			break;
 		}
 	}
+
 	if (inclusionType == NONE) {
 		return searchQueue;
-	}
-	
-	if (inclusionType == AND) {
+	} else if (inclusionType == AND) {
 		std::vector<Node*> finalResult;
 		for (int i = 0; i < columnCount; ++i) {
 			if (columnTrees[i]->getName() == firstTwoOperand) {
@@ -117,13 +119,13 @@ std::vector<Node*> database::select(Comparisson queryType, std::string firstOper
 					Node* tmp = searchQueue[j];
 					for (int k = 0; k < i; ++k)
 						tmp = tmp->nextField;
-
 					if (queryTwoType == SMALLER) {
 						if (tmp->data < secondTwoOperand)
 							finalResult.push_back(searchQueue[j]);
 					} else if (queryTwoType == EQUAL) {
-						if (tmp->data == secondTwoOperand)
+						if (tmp->data == secondTwoOperand) {
 							finalResult.push_back(searchQueue[j]);
+						}
 					} else if (queryTwoType == BIGGER){
 						if (tmp->data > secondTwoOperand)
 							finalResult.push_back(searchQueue[j]);
@@ -145,21 +147,27 @@ std::vector<Node*> database::select(Comparisson queryType, std::string firstOper
 
 				sortVector(searchQueue);
 				sortVector(searchTwoQueue);
-				
 				int iterOne = 0, iterTwo = 0;
 				while (iterOne < searchQueue.size() and iterTwo < searchTwoQueue.size()) {
 					if (searchQueue[iterOne]->data < searchTwoQueue[iterTwo]->data) {
 						finalResult.push_back(searchQueue[iterOne++]);
 					} else if (searchQueue[iterOne]->data > searchTwoQueue[iterTwo]->data) {
-						finalResult.push_back(searchQueue[iterTwo++]);
+						finalResult.push_back(searchTwoQueue[iterTwo++]);
 					} else {
 						finalResult.push_back(searchQueue[iterOne++]); iterTwo++;
 					}
+				}
+				while (iterOne < searchQueue.size()) {
+					finalResult.push_back(searchQueue[iterOne++]);
+				}
+				while (iterTwo < searchTwoQueue.size()) {
+					finalResult.push_back(searchTwoQueue[iterTwo++]);
 				}
 			}
 		}
 		return finalResult;
 	}
+	return searchQueue;
 }
 
 void database::printSelectChunk(Comparisson queryType, std::string firstOperandStr, std::string secondOperandStr, vector<std::string> &columnListVec, multiCondition inclusionType, Comparisson queryTwoType, std::string firstTwoOperand, std::string secondTwoOperand) {
@@ -168,9 +176,8 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 	for (int i = 0; i < columnCount; ++i) {
 		if (columnTrees[i]->getName() == firstOperandStr) {
 			for (int j = 0; j < columnCount; ++j) {
-				if (columnTrees[j]->getName() == secondTwoOperand) {
+				if (columnTrees[j]->getName() == firstTwoOperand or inclusionType == NONE) {
 					printing = select(queryType, firstOperandStr, hashh(secondOperandStr, columnTypes[i]), inclusionType, queryTwoType, firstTwoOperand, hashh(secondTwoOperand, columnTypes[j]));
-					sortVector(printing);
 					break;
 				}
 			}
@@ -179,7 +186,7 @@ void database::printSelectChunk(Comparisson queryType, std::string firstOperandS
 	for (int i = 0; i < printing.size(); ++i) {
 		for (int j = 0; j < columnCount; ++j) {
 			for (int k = 0; k < listSize; ++k) {
-				if (columnTrees[j]->getName() == columnListVec[k], STRING) {
+				if (columnTrees[j]->getName() == columnListVec[k]) {
 					std::cout << deHash(printing[i]->data, columnTypes[j]) << " ";
 				}
 			}

@@ -1,6 +1,6 @@
 #include "database.h"
 #include "utils/hashUtils.h"
-#include "validators.cpp"
+#include "validators/validators.h"
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -98,7 +98,6 @@ int main() {
 	cin.ignore();
 	while (qCnt--) {
 		getline(cin, inputLine);
-		validator_command(cleanInput(inputLine));
 		stringstream commandLineInput(cleanInput(inputLine));
 		string parsedWord;
 		getline(commandLineInput, parsedWord, ' ');
@@ -150,9 +149,6 @@ int main() {
 			}
 			inputee[0] = inputee[0].substr(1);
 			inputee[inputee.size()-1] = inputee[inputee.size()-1].substr(0, inputee[inputee.size()-1].size()-1);
-			cerr << "INSERT" << endl;
-			for (int i = 0; i < (int)inputee.size(); ++i) cerr << inputee[i] << " ";
-			cerr << endl << endl;
 			databaseList[tableIndex]->insert(inputee);
 		}
 		else if (parsedWord == "DELETE") {
@@ -170,7 +166,7 @@ int main() {
 					tmp = AND;
 				else
 					tmp = OR;
-
+				//cerr << "went to delte " << tmp << endl;
 				Comparisson firstQ;
 				getline(commandLineInput, query, ' ');
 				for (int k = 0; k < (int)parsedWord.size(); ++k) {
